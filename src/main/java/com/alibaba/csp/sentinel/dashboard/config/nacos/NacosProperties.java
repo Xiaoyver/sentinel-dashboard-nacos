@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
  * Nacos配置
  */
 @Data
-@ConfigurationProperties(prefix = "sentinel.nacos")
+@ConfigurationProperties(prefix = "nacos")
 public class NacosProperties {
     /**
      * 服务地址
@@ -22,4 +22,8 @@ public class NacosProperties {
      * 命名空间
      */
     private String namespace;
+
+    private String username;
+
+    private String password;
 }

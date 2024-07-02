@@ -47,12 +47,16 @@ public class NacosConfig {
     public ConfigService nacosConfigService() throws Exception {
         String serverAddr = nacosProperties.getServerAddr();
         String namespace = nacosProperties.getNamespace();
+        String username = nacosProperties.getUsername();
+        String password = nacosProperties.getPassword();
 
         Properties properties = new Properties();
         //设置nacos服务地址
         properties.put(PropertyKeyConst.SERVER_ADDR, serverAddr);
         //设置nacos命名空间
         properties.put(PropertyKeyConst.NAMESPACE, namespace);
+        properties.put(PropertyKeyConst.USERNAME, username);
+        properties.put(PropertyKeyConst.PASSWORD, password);
 
         return ConfigFactory.createConfigService(properties);
     }

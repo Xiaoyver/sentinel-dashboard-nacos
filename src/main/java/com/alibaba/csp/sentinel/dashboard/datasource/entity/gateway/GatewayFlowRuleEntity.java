@@ -32,13 +32,21 @@ import java.util.Objects;
 public class GatewayFlowRuleEntity implements RuleEntity {
 
     /**间隔单位*/
-    /**0-秒*/
+    /**
+     * 0-秒
+     */
     public static final int INTERVAL_UNIT_SECOND = 0;
-    /**1-分*/
+    /**
+     * 1-分
+     */
     public static final int INTERVAL_UNIT_MINUTE = 1;
-    /**2-时*/
+    /**
+     * 2-时
+     */
     public static final int INTERVAL_UNIT_HOUR = 2;
-    /**3-天*/
+    /**
+     * 3-天
+     */
     public static final int INTERVAL_UNIT_DAY = 3;
 
     private Long id;
@@ -57,6 +65,8 @@ public class GatewayFlowRuleEntity implements RuleEntity {
     private Long interval;
     private Integer intervalUnit;
 
+    private Long intervalSec;
+
     private Integer controlBehavior;
     private Integer burst;
 
@@ -66,8 +76,6 @@ public class GatewayFlowRuleEntity implements RuleEntity {
 
     public static Long calIntervalSec(Long interval, Integer intervalUnit) {
         switch (intervalUnit) {
-            case INTERVAL_UNIT_SECOND:
-                return interval;
             case INTERVAL_UNIT_MINUTE:
                 return interval * 60;
             case INTERVAL_UNIT_HOUR:
@@ -75,26 +83,26 @@ public class GatewayFlowRuleEntity implements RuleEntity {
             case INTERVAL_UNIT_DAY:
                 return interval * 60 * 60 * 24;
             default:
-                break;
+                return interval;
         }
 
-        throw new IllegalArgumentException("Invalid intervalUnit: " + intervalUnit);
+//        throw new IllegalArgumentException("Invalid intervalUnit: " + intervalUnit);
     }
 
     public static Object[] parseIntervalSec(Long intervalSec) {
         if (intervalSec % (60 * 60 * 24) == 0) {
-            return new Object[] {intervalSec / (60 * 60 * 24), INTERVAL_UNIT_DAY};
+            return new Object[]{intervalSec / (60 * 60 * 24), INTERVAL_UNIT_DAY};
         }
 
-        if (intervalSec % (60 * 60 ) == 0) {
-            return new Object[] {intervalSec / (60 * 60), INTERVAL_UNIT_HOUR};
+        if (intervalSec % (60 * 60) == 0) {
+            return new Object[]{intervalSec / (60 * 60), INTERVAL_UNIT_HOUR};
         }
 
         if (intervalSec % 60 == 0) {
-            return new Object[] {intervalSec / 60, INTERVAL_UNIT_MINUTE};
+            return new Object[]{intervalSec / 60, INTERVAL_UNIT_MINUTE};
         }
 
-        return new Object[] {intervalSec, INTERVAL_UNIT_SECOND};
+        return new Object[]{intervalSec, INTERVAL_UNIT_SECOND};
     }
 
     public GatewayFlowRule toGatewayFlowRule() {
@@ -268,6 +276,9 @@ public class GatewayFlowRuleEntity implements RuleEntity {
 
     public void setInterval(Long interval) {
         this.interval = interval;
+        if (this.interval != null && this.intervalUnit != null) {
+            this.intervalSec = calIntervalSec(this.interval, this.intervalUnit);
+        }
     }
 
     public Integer getIntervalUnit() {
@@ -276,6 +287,9 @@ public class GatewayFlowRuleEntity implements RuleEntity {
 
     public void setIntervalUnit(Integer intervalUnit) {
         this.intervalUnit = intervalUnit;
+        if (this.interval != null && this.intervalUnit != null) {
+            this.intervalSec = calIntervalSec(this.interval, this.intervalUnit);
+        }
     }
 
     public Integer getControlBehavior() {
@@ -302,10 +316,22 @@ public class GatewayFlowRuleEntity implements RuleEntity {
         this.maxQueueingTimeoutMs = maxQueueingTimeoutMs;
     }
 
+    public Long getIntervalSec() {
+        return intervalSec;
+    }
+
+    public void setIntervalSec(Long intervalSec) {
+        this.intervalSec = intervalSec;
+    }
+
     @Override
     public boolean equals(Object o) {
-        if (this == o) { return true; }
-        if (o == null || getClass() != o.getClass()) { return false; }
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         GatewayFlowRuleEntity that = (GatewayFlowRuleEntity) o;
         return Objects.equals(id, that.id) &&
                 Objects.equals(app, that.app) &&
