@@ -77,7 +77,7 @@ public class AuthorityRuleController {
         }
         try {
 //            List<AuthorityRuleEntity> rules = sentinelApiClient.fetchAuthorityRulesOfMachine(app, ip, port);
-            String ruleStr = ruleProvider.getRules(app + NacosConfigUtil.SYSTEM_FLOW_DATA_ID_POSTFIX);
+            String ruleStr = ruleProvider.getRules(app + NacosConfigUtil.AUTHORITY_FLOW_DATA_ID_POSTFIX);
             List<AuthorityRuleEntity> rules = new ArrayList<>();
             if (ruleStr != null) {
                 rules = JSON.parseArray(ruleStr, AuthorityRuleEntity.class);
