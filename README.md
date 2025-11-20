@@ -133,3 +133,5 @@
            -p 8080:8080 \
            sentinel-dashboard-nacos:1.8.8
     ```
+   
+原始README: [Sentinel 控制台启动和客户端接入](./original_readme.md)
