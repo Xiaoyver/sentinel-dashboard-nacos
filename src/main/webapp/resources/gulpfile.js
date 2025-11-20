@@ -58,9 +58,6 @@ const JS_APP = [
   'app/scripts/services/cluster_state_service.js',
   'app/scripts/services/gateway/api_service.js',
   'app/scripts/services/gateway/flow_service.js',
-  //新增通过Nacos持久化业务接口
-  'app/scripts/services/gateway/api_service_v2.js',
-  'app/scripts/services/gateway/flow_service_v2.js',
 ];
 
 gulp.task('lib', function () {
