@@ -18,6 +18,7 @@
 - `FlowRuleControllerV1`
 - `FlowRuleControllerV2`
 - `GatewayApiController`
+- `GatewayFlowRuleController`
 - `ParamFlowRuleController`
 - `SystemController`
 

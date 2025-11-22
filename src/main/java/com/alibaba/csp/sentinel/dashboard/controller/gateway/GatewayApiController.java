@@ -79,7 +79,7 @@ public class GatewayApiController {
 
         try {
 //            List<ApiDefinitionEntity> apis = sentinelApiClient.fetchApis(app, ip, port).get();
-            String ruleStr = ruleProvider.getRules(app + NacosConfigUtil.GATEWAY_FLOW_DATA_ID_POSTFIX);
+            String ruleStr = ruleProvider.getRules(app + NacosConfigUtil.GATEWAY_API_DATA_ID_POSTFIX);
             List<ApiDefinitionEntity> apis = new ArrayList<>();
             if (ruleStr != null) {
                 apis = JSON.parseArray(ruleStr, ApiDefinitionEntity.class);
@@ -283,7 +283,7 @@ public class GatewayApiController {
 
         List<ApiDefinitionEntity> apis = repository.findAllByApp(app);
         String ruleStr = JSON.toJSONString(apis);
-        rulePublisher.publish(app + NacosConfigUtil.GATEWAY_FLOW_DATA_ID_POSTFIX, ruleStr);
+        rulePublisher.publish(app + NacosConfigUtil.GATEWAY_API_DATA_ID_POSTFIX, ruleStr);
         return true;
     }
 }

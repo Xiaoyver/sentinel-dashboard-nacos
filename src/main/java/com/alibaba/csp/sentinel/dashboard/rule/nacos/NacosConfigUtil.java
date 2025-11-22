@@ -9,7 +9,8 @@ public class NacosConfigUtil {
 
     public static final String FLOW_DATA_ID_POSTFIX = "-flow-rules";
 
-    public static final String GATEWAY_FLOW_DATA_ID_POSTFIX = "-gateway-rules";
+    public static final String GATEWAY_API_DATA_ID_POSTFIX = "-gateway-api-rules";
+    public static final String GATEWAY_FLOW_DATA_ID_POSTFIX = "-gateway-flow-rules";
 
     public static final String AUTHORITY_FLOW_DATA_ID_POSTFIX = "-authority-rules";
 
