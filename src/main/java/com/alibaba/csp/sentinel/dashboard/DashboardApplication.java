@@ -19,14 +19,12 @@ import com.alibaba.csp.sentinel.init.InitExecutor;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ComponentScan;
 
 /**
  * Sentinel dashboard application.
  *
  * @author Carpenter Lee
  */
-@ComponentScan("com.alibaba")
 @SpringBootApplication
 public class DashboardApplication {
 
