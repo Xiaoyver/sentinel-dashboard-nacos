@@ -15,33 +15,25 @@
  */
 package com.alibaba.csp.sentinel.dashboard.controller.v2;
 
-import java.util.Date;
-import java.util.List;
-
 import com.alibaba.csp.sentinel.dashboard.auth.AuthAction;
 import com.alibaba.csp.sentinel.dashboard.auth.AuthService;
 import com.alibaba.csp.sentinel.dashboard.auth.AuthService.PrivilegeType;
-import com.alibaba.csp.sentinel.util.StringUtil;
-
 import com.alibaba.csp.sentinel.dashboard.datasource.entity.rule.FlowRuleEntity;
-import com.alibaba.csp.sentinel.dashboard.repository.rule.InMemoryRuleRepositoryAdapter;
-import com.alibaba.csp.sentinel.dashboard.rule.DynamicRuleProvider;
-import com.alibaba.csp.sentinel.dashboard.rule.DynamicRulePublisher;
 import com.alibaba.csp.sentinel.dashboard.domain.Result;
-
+import com.alibaba.csp.sentinel.dashboard.repository.rule.InMemoryRuleRepositoryAdapter;
+import com.alibaba.csp.sentinel.dashboard.rule.nacos.NacosConfigUtil;
+import com.alibaba.csp.sentinel.dashboard.rule.nacos.RuleNacosProvider;
+import com.alibaba.csp.sentinel.dashboard.rule.nacos.RuleNacosPublisher;
+import com.alibaba.csp.sentinel.util.StringUtil;
+import com.alibaba.fastjson.JSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Flow rule controller (v2).
@@ -58,12 +50,16 @@ public class FlowControllerV2 {
     @Autowired
     private InMemoryRuleRepositoryAdapter<FlowRuleEntity> repository;
 
+    //    @Autowired
+//    @Qualifier("flowRuleDefaultProvider")
+//    private DynamicRuleProvider<List<FlowRuleEntity>> ruleProvider;
+//    @Autowired
+//    @Qualifier("flowRuleDefaultPublisher")
+//    private DynamicRulePublisher<List<FlowRuleEntity>> rulePublisher;
     @Autowired
-    @Qualifier("flowRuleDefaultProvider")
-    private DynamicRuleProvider<List<FlowRuleEntity>> ruleProvider;
+    private RuleNacosProvider ruleProvider;
     @Autowired
-    @Qualifier("flowRuleDefaultPublisher")
-    private DynamicRulePublisher<List<FlowRuleEntity>> rulePublisher;
+    private RuleNacosPublisher rulePublisher;
 
     @GetMapping("/rules")
     @AuthAction(PrivilegeType.READ_RULE)
@@ -73,12 +69,24 @@ public class FlowControllerV2 {
             return Result.ofFail(-1, "app can't be null or empty");
         }
         try {
-            List<FlowRuleEntity> rules = ruleProvider.getRules(app);
-            if (rules != null && !rules.isEmpty()) {
-                for (FlowRuleEntity entity : rules) {
-                    entity.setApp(app);
-                    if (entity.getClusterConfig() != null && entity.getClusterConfig().getFlowId() != null) {
-                        entity.setId(entity.getClusterConfig().getFlowId());
+//            List<FlowRuleEntity> rules = ruleProvider.getRules(app);
+//            if (rules != null && !rules.isEmpty()) {
+//                for (FlowRuleEntity entity : rules) {
+//                    entity.setApp(app);
+//                    if (entity.getClusterConfig() != null && entity.getClusterConfig().getFlowId() != null) {
+//                        entity.setId(entity.getClusterConfig().getFlowId());
+//                    }
+//                }
+//            }
+//            rules = repository.saveAll(rules);
+//            return Result.ofSuccess(rules);
+            String ruleStr = ruleProvider.getRules(app + NacosConfigUtil.FLOW_DATA_ID_POSTFIX);
+            List<FlowRuleEntity> rules = new ArrayList<>();
+            if (ruleStr != null) {
+                rules = JSON.parseArray(ruleStr, FlowRuleEntity.class);
+                if (rules != null && !rules.isEmpty()) {
+                    for (FlowRuleEntity entity : rules) {
+                        entity.setApp(app);
                     }
                 }
             }
@@ -219,8 +227,13 @@ public class FlowControllerV2 {
         return Result.ofSuccess(id);
     }
 
-    private void publishRules(/*@NonNull*/ String app) throws Exception {
+    //    private void publishRules(/*@NonNull*/ String app) throws Exception {
+//        List<FlowRuleEntity> rules = repository.findAllByApp(app);
+//        rulePublisher.publish(app, rules);
+//    }
+    private void publishRules(String app) {
         List<FlowRuleEntity> rules = repository.findAllByApp(app);
-        rulePublisher.publish(app, rules);
+        String ruleStr = JSON.toJSONString(rules);
+        rulePublisher.publish(app + NacosConfigUtil.FLOW_DATA_ID_POSTFIX, ruleStr);
     }
 }
