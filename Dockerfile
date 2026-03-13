@@ -13,6 +13,7 @@ ENV NACOS_SERVER_ADDR=localhost:8848
 ENV NACOS_NAMESPACE=public
 ENV NACOS_USERNAME=nacos
 ENV NACOS_PASSWORD=nacos
+ENV AUTO_REMOVE_MACHINE_MILLIS=0
 
 RUN chmod -R +x /home/sentinel-dashboard.jar
 
@@ -21,6 +22,7 @@ EXPOSE ${SERVER_PORT}
 # 在CMD中直接使用环境变量，不使用嵌套的shell变量替换语法
 CMD java -Dserver.port=${SERVER_PORT} \
          -Dcsp.sentinel.dashboard.server=localhost:${SERVER_PORT} \
+         -Dsentinel.dashboard.autoRemoveMachineMillis=${AUTO_REMOVE_MACHINE_MILLIS} \
          -DNACOS_SERVER_ADDR=${NACOS_SERVER_ADDR} \
          -DNACOS_NAMESPACE=${NACOS_NAMESPACE} \
          -DNACOS_USERNAME=${NACOS_USERNAME} \
